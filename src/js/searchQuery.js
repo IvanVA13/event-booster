@@ -1,61 +1,24 @@
-import api from './apiService';
 import { refs } from './refs';
-import eventRender from './eventRender';
-import cardContainerMkp from '../templates/card-container.hbs';
+import {eventRender} from './eventRender';
+import {searchOptions} from './eventRender';
 
 export const addSearchQuery = el => {
   if (el.target.name === 'search') {
-    searchEventsByQuery(el.target.value);
-  }
-  // для инпута со странами подставить подходящий класс или свой if
-  // if (el.target.name === 'country') {
-  //   searchEventsByCountry(el.target.value);
-  // }
-  else {
+    searchEvents({query: el.target.value})
+  } else {
     return;
   }
 };
 
-const searchEventsByQuery = value => {
-  clearCardContainer();
-  refs.spinner.classList.remove('hidden');
-
-  api.options.searchQuery = value;
-  eventRender();
-};
-
-// функция поиска по странам. заменить на корректную
-// value -- код страны
-// const searchEventsByCountry = value => {
-//   api.options.countryQuery = value;
-//   eventRender();
-// };
-
-const eventApiService = new api.EventApiService();
-
 export function onCountrySearch() {
-  // this.value - значення атрибуту value тега <option>, яке відповідає значенню countryCode
-  // function declaration тому що this
-  eventApiService.countryQuery = this.value;
-  searchEventsByCountry();
+  searchEvents({country: this.value})
 }
 
-const searchEventsByCountry = async () => {
-  try {
-    const result = await eventApiService.fetchEventByCountryCode();
-    clearCardContainer();
-    renderEventCards(result);
-  } catch (error) {
-    console.log('Error');
-  }
-};
-
-const clearCardContainer = () => {
+const searchEvents = value => {
   refs.cardContainer.innerHTML = '';
-};
-
-const renderEventCards = result => {
-  refs.cardContainer.insertAdjacentHTML('beforeend', cardContainerMkp(result));
+  refs.spinner.classList.remove('hidden');
+  searchOptions[Object.keys(value)[0]] = Object.values(value)[0]
+  eventRender();
 };
 
 export default { addSearchQuery, onCountrySearch };
