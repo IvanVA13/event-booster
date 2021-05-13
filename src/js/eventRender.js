@@ -1,9 +1,10 @@
-import api from './apiService';
+import EventApiService from './apiService';
 import { refs } from './refs';
 import cardContainerMkp from '../templates/card-container.hbs';
+export const searchOptions = {query: "", country: ""}
 
-const eventApiService = new api.EventApiService();
-export default async () => {
+  export const eventRender = async () => {
+    const eventApiService = new EventApiService(searchOptions);
   try {
     const result = await eventApiService.fetchEvent();
     refs.cardContainer.insertAdjacentHTML(
